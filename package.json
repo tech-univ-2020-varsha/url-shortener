@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@hapi/hapi": "^19.0.5",
+    "hapi-url": "^1.0.2",
     "hashlib": "^1.0.1",
     "pg": "^7.18.1",
     "pg-hstore": "^2.3.3",
