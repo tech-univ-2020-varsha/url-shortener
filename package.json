@@ -1,0 +1,32 @@
+{
+  "name": "urlshortener",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/tech-univ-2020-varsha/url-shortener.git"
+  },
+  "author": "varshacl",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tech-univ-2020-varsha/url-shortener/issues"
+  },
+  "homepage": "https://github.com/tech-univ-2020-varsha/url-shortener#readme",
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.20.0",
+    "jest": "^25.1.0"
+  },
+  "dependencies": {
+    "@hapi/hapi": "^19.0.5",
+    "pg": "^7.18.1",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^5.21.3",
+    "sequelize-cli": "^5.5.1"
+  }
+}
