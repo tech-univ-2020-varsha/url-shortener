@@ -14,4 +14,17 @@ const writeDB = async (urlMapping) => {
   }
 };
 
-module.exports = { writeDB };
+const getLongUrl = async (shortUrl) => {
+  try {
+    const result = await urlShortenerSequelize.urlShortener.findAll({
+      where: {
+        shortUrl,
+      },
+    });
+    return result;
+  } catch (error) {
+    return 'unable to retreive url from the db';
+  }
+};
+
+module.exports = { writeDB, getLongUrl };
