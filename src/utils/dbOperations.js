@@ -3,11 +3,10 @@ const urlShortenerSequelize = require('../../models/index');
 
 const writeDB = async (urlMapping) => {
   try {
-    const result = await urlShortenerSequelize.urlShortener.create({
+    const result = await urlShortenerSequelize.urlshortener.create({
       longUrl: urlMapping.longUrl,
       shortUrl: urlMapping.shortUrl,
     });
-
     return result;
   } catch (error) {
     return 'unable to insert data to db';
@@ -16,12 +15,14 @@ const writeDB = async (urlMapping) => {
 
 const getLongUrl = async (shortUrl) => {
   try {
-    const result = await urlShortenerSequelize.urlShortener.findAll({
+    const result = await urlShortenerSequelize.urlshortener.findAll({
+      raw: true,
+      attributes: ['longUrl'],
       where: {
         shortUrl,
       },
     });
-    return result;
+    return result[0].longUrl;
   } catch (error) {
     return 'unable to retreive url from the db';
   }
