@@ -22,7 +22,7 @@ const getLongUrl = async (shortUrl) => {
         shortUrl,
       },
     });
-    return result[0].longUrl;
+    return result;
   } catch (error) {
     return 'unable to retreive url from the db';
   }

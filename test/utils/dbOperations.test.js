@@ -40,7 +40,7 @@ describe('the getLongURL function', () => {
     mockQuery.mockResolvedValue(mockResponseLongUrl);
     const result = await dbOperations.getLongUrl(mockShortUrl);
     expect(mockQuery).toHaveBeenCalledWith(mockWhereQuery);
-    expect(result).toBe(mockResponseLongUrl[0].longUrl);
+    expect(result).toBe(mockResponseLongUrl);
   });
 
   it('should give an error message when db query fails', async () => {

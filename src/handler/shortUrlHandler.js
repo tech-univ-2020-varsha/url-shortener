@@ -22,9 +22,11 @@ const redirectUrl = async (request, h) => {
   try {
     const shortUrl = request.params.urlhash;
 
-    const longUrl = await dbOperations.getLongUrl(shortUrl);
-
-    return h.redirect(longUrl);
+    const longUrlObject = await dbOperations.getLongUrl(shortUrl);
+    if (longUrlObject.length === 0) {
+      return h.response(`${shortUrl} not found`).code(404);
+    }
+    return h.redirect(longUrlObject[0].longUrl);
   } catch (err) {
     return h.response('Error in redirecting').code(500);
   }

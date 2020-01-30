@@ -47,7 +47,7 @@ describe('create short url function', () => {
 });
 
 describe('the redirect url function', () => {
-  it('should obtain status code of 302 and be able to redirect to corresponding long url ', async () => {
+  it('should obtain status code of 302 on successfull redirection to corresponding long url ', async () => {
     const mockRequest = {
       params: {
         urlhash: 'bf3870c1',
@@ -61,11 +61,11 @@ describe('the redirect url function', () => {
     };
 
     const mockGetLongUrl = jest.spyOn(dbOperations, 'getLongUrl');
-    const mockLongUrl = 'https://github.com/VarshaCL';
+    const mockLongUrl = [{ longUrl: 'https://github.com/VarshaCL' }];
 
     mockGetLongUrl.mockResolvedValue(mockLongUrl);
     await redirectUrl(mockRequest, mockH);
-    expect(mockH.redirect).toHaveBeenCalledWith(mockLongUrl);
+    expect(mockH.redirect).toHaveBeenCalledWith(mockLongUrl[0].longUrl);
     mockGetLongUrl.mockRestore();
     mockRedirect.mockRestore();
     mockCode.mockRestore();
@@ -85,12 +85,36 @@ describe('the redirect url function', () => {
     };
 
     const mockGetLongUrl = jest.spyOn(dbOperations, 'getLongUrl');
-    const mockLongUrl = 'https://github.com/VarshaCL';
+    const mockLongUrl = [{ longUrl: 'https://github.com/VarshaCL' }];
 
     mockGetLongUrl.mockRejectedValue(() => mockLongUrl);
     await redirectUrl(mockRequest, mockH);
     expect(mockH.response).toHaveBeenCalledWith('Error in redirecting');
     expect(mockCode).toHaveBeenCalledWith(500);
+    mockGetLongUrl.mockRestore();
+    mockRedirect.mockRestore();
+    mockCode.mockRestore();
+  });
+  it('should obtain error code code of 404 when short-url doesnt not exist in the db', async () => {
+    const mockRequest = {
+      params: {
+        urlhash: 'bf3870c1',
+      },
+    };
+    const mockCode = jest.fn();
+    const mockRedirect = jest.fn();
+    const mockH = {
+      response: jest.fn(() => ({ code: mockCode })),
+      redirect: mockRedirect,
+    };
+
+    const mockGetLongUrl = jest.spyOn(dbOperations, 'getLongUrl');
+    const mockLongUrl = [];
+
+    mockGetLongUrl.mockResolvedValue(mockLongUrl);
+    await redirectUrl(mockRequest, mockH);
+    expect(mockH.response).toHaveBeenCalledWith(`${mockRequest.params.urlhash} not found`);
+    expect(mockCode).toHaveBeenCalledWith(404);
     mockGetLongUrl.mockRestore();
     mockRedirect.mockRestore();
     mockCode.mockRestore();
