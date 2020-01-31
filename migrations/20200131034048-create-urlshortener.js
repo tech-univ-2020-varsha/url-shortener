@@ -13,6 +13,9 @@ module.exports = {
     shortUrl: {
       type: Sequelize.TEXT,
     },
+    expiresat: {
+      type: Sequelize.TEXT,
+    },
     createdAt: {
       allowNull: false,
       type: Sequelize.DATE,

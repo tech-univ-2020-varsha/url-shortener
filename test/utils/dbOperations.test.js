@@ -6,6 +6,7 @@ describe('the writeDB function', () => {
     const urlMapping = {
       longUrl: 'https://www.github.com/shubhamzanwar',
       shortUrl: '1856f451',
+      expiresat: '1580444129764',
     };
     const mockQuery = jest.spyOn(urlShortenerSequelize.urlshortener, 'create');
     mockQuery.mockResolvedValue();
@@ -27,11 +28,11 @@ describe('the writeDB function', () => {
 
 describe('the getLongURL function', () => {
   it('should return the long url corresponding to the given short url', async () => {
-    const mockResponseLongUrl = [{ longUrl: 'https://github.com/VarshaCL' }];
+    const mockResponseLongUrl = [{ longUrl: 'https://github.com/VarshaCL', expiresat: '1580444129764' }];
     const mockShortUrl = '1856f451';
     const mockWhereQuery = {
       raw: true,
-      attributes: ['longUrl'],
+      attributes: ['longUrl', 'expiresat'],
       where: {
         shortUrl: mockShortUrl,
       },
@@ -47,7 +48,7 @@ describe('the getLongURL function', () => {
     const mockShortUrl = '1856f451';
     const mockWhereQuery = {
       raw: true,
-      attributes: ['longUrl'],
+      attributes: ['longUrl', 'expiresat'],
       where: {
         shortUrl: mockShortUrl,
       },

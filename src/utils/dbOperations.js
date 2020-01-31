@@ -6,7 +6,9 @@ const writeDB = async (urlMapping) => {
     const result = await urlShortenerSequelize.urlshortener.create({
       longUrl: urlMapping.longUrl,
       shortUrl: urlMapping.shortUrl,
+      expiresat: urlMapping.expiresat,
     });
+
     return result;
   } catch (error) {
     return 'unable to insert data to db';
@@ -17,7 +19,7 @@ const getLongUrl = async (shortUrl) => {
   try {
     const result = await urlShortenerSequelize.urlshortener.findAll({
       raw: true,
-      attributes: ['longUrl'],
+      attributes: ['longUrl', 'expiresat'],
       where: {
         shortUrl,
       },
@@ -27,5 +29,6 @@ const getLongUrl = async (shortUrl) => {
     return 'unable to retreive url from the db';
   }
 };
+
 
 module.exports = { writeDB, getLongUrl };

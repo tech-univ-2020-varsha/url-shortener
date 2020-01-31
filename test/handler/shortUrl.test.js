@@ -61,7 +61,7 @@ describe('the redirect url function', () => {
     };
 
     const mockGetLongUrl = jest.spyOn(dbOperations, 'getLongUrl');
-    const mockLongUrl = [{ longUrl: 'https://github.com/VarshaCL' }];
+    const mockLongUrl = [{ longUrl: 'https://github.com/VarshaCL', expiresat: '1580444129764' }];
 
     mockGetLongUrl.mockResolvedValue(mockLongUrl);
     await redirectUrl(mockRequest, mockH);
@@ -85,7 +85,7 @@ describe('the redirect url function', () => {
     };
 
     const mockGetLongUrl = jest.spyOn(dbOperations, 'getLongUrl');
-    const mockLongUrl = [{ longUrl: 'https://github.com/VarshaCL' }];
+    const mockLongUrl = [{ longUrl: 'https://github.com/VarshaCL', expiresat: '1580444129764' }];
 
     mockGetLongUrl.mockRejectedValue(() => mockLongUrl);
     await redirectUrl(mockRequest, mockH);
@@ -115,6 +115,31 @@ describe('the redirect url function', () => {
     await redirectUrl(mockRequest, mockH);
     expect(mockH.response).toHaveBeenCalledWith(`${mockRequest.params.urlhash} not found`);
     expect(mockCode).toHaveBeenCalledWith(404);
+    mockGetLongUrl.mockRestore();
+    mockRedirect.mockRestore();
+    mockCode.mockRestore();
+  });
+  it('should obtain error code code of 410 when short-url has expired', async () => {
+    const mockRequest = {
+      params: {
+        urlhash: 'bf3870c1',
+      },
+    };
+    const mockCode = jest.fn();
+    const mockRedirect = jest.fn();
+    const mockH = {
+      response: jest.fn(() => ({ code: mockCode })),
+      redirect: mockRedirect,
+    };
+
+    const mockGetLongUrl = jest.spyOn(dbOperations, 'getLongUrl');
+    const mockLongUrl = [{ longUrl: 'https://github.com/VarshaCL', expiresat: '1580444129764' }];
+    Date.now = jest.fn(() => '1580444129769');
+
+    mockGetLongUrl.mockResolvedValue(mockLongUrl);
+    await redirectUrl(mockRequest, mockH);
+    expect(mockH.response).toHaveBeenCalledWith(`${mockRequest.params.urlhash} has expired: GONE`);
+    expect(mockCode).toHaveBeenCalledWith(410);
     mockGetLongUrl.mockRestore();
     mockRedirect.mockRestore();
     mockCode.mockRestore();

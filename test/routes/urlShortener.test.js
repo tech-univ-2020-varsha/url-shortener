@@ -62,7 +62,8 @@ describe('redirect url route ', () => {
 
   it('should obtain status code of 302 on successful redirection', async () => {
     const mockGetLongUrl = jest.spyOn(dbOperations, 'getLongUrl');
-    const mockLongUrl = 'https://github.com/VarshaCL';
+    const mockLongUrl = [{ longUrl: 'https://github.com/VarshaCL', expiresat: '1580444129764' }];
+
     const redirectUrlObj = {
       method: 'GET',
       url: '/bf3870c1',
@@ -89,6 +90,23 @@ describe('redirect url route ', () => {
     const response = await server.inject(redirectUrlObj);
 
     expect(response.statusCode).toBe(500);
+
+    mockGetLongUrl.mockRestore();
+  });
+  it('should obtain status code of 410 short url expires', async () => {
+    const mockGetLongUrl = jest.spyOn(dbOperations, 'getLongUrl');
+    const redirectUrlObj = {
+      method: 'GET',
+      url: '/bf3870c1',
+
+    };
+
+    const mockLongUrl = [{ longUrl: 'https://github.com/VarshaCL', expiresat: '1580444129764' }];
+    Date.now = jest.fn(() => '1580444129769');
+    mockGetLongUrl.mockResolvedValue(mockLongUrl);
+    const response = await server.inject(redirectUrlObj);
+
+    expect(response.statusCode).toBe(410);
 
     mockGetLongUrl.mockRestore();
   });
