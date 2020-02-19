@@ -12,16 +12,21 @@ describe('the writeDB function', () => {
     mockQuery.mockResolvedValue();
     await dbOperations.writeDB(urlMapping);
     expect(mockQuery).toHaveBeenCalledWith(urlMapping);
+    mockQuery.mockRestore();
   });
   it('should return error message on failing to write data to db ', async () => {
-    const urlMappng = {
-      longUrl: 'https://www.github.com/shubhamzanwar',
-      shortUrl: '1856f451',
-    };
-    const mockQuery = jest.spyOn(urlShortenerSequelize.urlshortener, 'create');
-    mockQuery.mockRejectedValue(new Error('unable to insert data to db'));
-    const result = await dbOperations.writeDB(urlMappng);
-    expect(result).toBe('unable to insert data to db');
+    try {
+      const urlMapping = {
+        longUrl: 'https://www.github.com/shubhamzanwar',
+        shortUrl: '1856f451',
+        expiresat: '1580444129764',
+      };
+      const mockQuery = jest.spyOn(urlShortenerSequelize.urlshortener, 'create');
+      mockQuery.mockRejectedValue(new Error('unable to insert data to db'));
+      await dbOperations.writeDB(urlMapping);
+    } catch (error) {
+      expect(error.message).toBe('unable to insert data to db');
+    }
   });
 });
 
@@ -45,6 +50,7 @@ describe('the getLongURL function', () => {
   });
 
   it('should give an error message when db query fails', async () => {
+    const mockQuery = jest.spyOn(urlShortenerSequelize.urlshortener, 'findAll');
     const mockShortUrl = '1856f451';
     const mockWhereQuery = {
       raw: true,
@@ -53,10 +59,16 @@ describe('the getLongURL function', () => {
         shortUrl: mockShortUrl,
       },
     };
-    const mockQuery = jest.spyOn(urlShortenerSequelize.urlshortener, 'findAll');
-    mockQuery.mockRejectedValue(new Error('unable to retreive url from the db'));
-    const result = await dbOperations.getLongUrl(mockShortUrl);
-    expect(mockQuery).toHaveBeenCalledWith(mockWhereQuery);
-    expect(result).toBe('unable to retreive url from the db');
+    try {
+      mockQuery.mockRejectedValue(new Error('unable to retreive url from the db'));
+      await dbOperations.getLongUrl(mockShortUrl);
+    } catch (error) {
+      expect(mockQuery).toHaveBeenCalledWith(mockWhereQuery);
+      expect(error.message).toBe('unable to retreive url from the db');
+      // expect(async () => { await dbOperations.getLongUrl(mockShortUrl); }).toThrow();
+      // // Error(new Error('unable to retreive url from the db'));
+
+      // expect(result).toBe('unable to retreive url from the db');
+    }
   });
 });

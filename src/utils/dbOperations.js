@@ -11,7 +11,7 @@ const writeDB = async (urlMapping) => {
 
     return result;
   } catch (error) {
-    return 'unable to insert data to db';
+    throw new Error('unable to insert data to db');
   }
 };
 
@@ -26,7 +26,7 @@ const getLongUrl = async (shortUrl) => {
     });
     return result;
   } catch (error) {
-    return 'unable to retreive url from the db';
+    throw new Error('unable to retreive url from the db');
   }
 };
 
